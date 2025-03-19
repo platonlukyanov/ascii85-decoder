@@ -26,6 +26,7 @@ std::vector<int> convertToBase(int decimal, int base) {
 
 std::vector<uint32_t> readBytesByFour(const std::vector<uint8_t>& data) {
 	const bool littleEndian = isLittleEndian();
+
 	std::vector<uint32_t> values;
 	size_t index = 0;
 
@@ -63,7 +64,7 @@ std::vector<std::byte> readBytes() {
     return bytes;
 }
 
-std::vector<char> decodeBytesToASCII85(std::vector<std::byte>& bytes) {
+std::vector<char> encodeBytesToASCII85(std::vector<std::byte>& bytes) {
     	std::vector<uint8_t> uint8Bytes;
     	uint8Bytes.reserve(bytes.size());
     
@@ -99,7 +100,7 @@ int main()
 {
 	std::vector<std::byte> buffer = readBytes();
 	
-	for (char c : decodeBytesToASCII85(buffer)) {
+	for (char c : encodeBytesToASCII85(buffer)) {
 		std::cout << c;
 	}
 	std::cout << std::endl;
