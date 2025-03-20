@@ -2,4 +2,5 @@
 
 set -e
 
-g++ -o ascii85 main.cpp
+g++ -o encode85 encode.cpp
+g++ -o decode85 decoder.cpp
