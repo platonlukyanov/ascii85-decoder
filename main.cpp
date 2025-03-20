@@ -166,6 +166,10 @@ std::string decodeASCII85(std::string& codedText) {
 	std::string cleaned = cleanASCII85(codedText);
 	std::string cleanedAndPadded = padASCII85String(cleaned);
 
+	if (cleaned.empty()) {
+		throw std::invalid_argument("Empty string after removing whitespace characters");
+	}
+
 	int padding = (5 - cleaned.length() % 5) % 5;
 	
 	int start = 0;
@@ -173,7 +177,10 @@ std::string decodeASCII85(std::string& codedText) {
 	while (start + 4 < cleanedAndPadded.length()) {
 		uint32_t value = 0;
 		for (int i = 0; i <= start + 4; i++) {
-			int character = cleanedAndPadded[start + i];
+			char character = cleanedAndPadded[start + i];
+			if (alphabetLookup.count(character) <= 0) {
+				throw std::invalid_argument("Invalid non-ASCII85 characters");
+			}
 			int multiplier = alphabetLookup[character];
 			if (multiplier < 0) {
 				continue;
