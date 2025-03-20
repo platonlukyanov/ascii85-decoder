@@ -11,7 +11,7 @@ bool isLittleEndian() {
 	return (*(uint8_t*)&num == 1);
 }
 
-std::vector<int> convertToBase(int decimal, int base) {
+std::vector<int> convertToBase(uint32_t decimal, int base) {
     std::vector<int> digits;
 
     while (decimal > 0) {

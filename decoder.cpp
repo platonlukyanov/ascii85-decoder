@@ -7,6 +7,14 @@
 
 const std::string alphabet = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu";
 
+std::unordered_map<char, int> alphabetLookup;
+
+void initAlphabetLookup() {
+    for (int i = 0; i < alphabet.size(); ++i) {
+        alphabetLookup[alphabet[i]] = i;
+    }
+}
+
 bool isLittleEndian() {
 	uint32_t num = 1;
 	return (*(uint8_t*)&num == 1);
@@ -36,7 +44,7 @@ std::string readString() {
     	return resultingStr;
 }
 
-std::string cleanASCII85(std::string ascii85Text) {
+std::string cleanASCII85(std::string& ascii85Text) {
 	std::string result;
 
 	for (char character : ascii85Text) {
@@ -54,7 +62,7 @@ std::string cleanASCII85(std::string ascii85Text) {
 	return result;
 }
 
-std::string padASCII85String(std::string cleanedAscii85Text) {
+std::string padASCII85String(std::string& cleanedAscii85Text) {
 	std::string result = cleanedAscii85Text;
 	int paddingNeeded = (5 - result.length() % 5) % 5;
 
@@ -81,10 +89,11 @@ std::vector<uint8_t> convertIntToBytes(uint32_t value, size_t numberOfBytes, int
 	return bytes;
 }
 
-std::string decodeASCII85(std::string codedText) {
+std::string decodeASCII85(std::string& codedText) {
 	std::string result;
 	std::string cleaned = cleanASCII85(codedText);
 	std::string cleanedAndPadded = padASCII85String(cleaned);
+
 	int padding = (5 - cleaned.length() % 5) % 5;
 	
 	int start = 0;
@@ -93,7 +102,7 @@ std::string decodeASCII85(std::string codedText) {
 		uint32_t value = 0;
 		for (int i = 0; i <= start + 4; i++) {
 			int character = cleanedAndPadded[start + i];
-			int multiplier = alphabet.find(character);
+			int multiplier = alphabetLookup[character];
 			if (multiplier < 0) {
 				continue;
 			}
@@ -103,8 +112,7 @@ std::string decodeASCII85(std::string codedText) {
 		start += 5;
 		std::vector<uint8_t> bytes = convertIntToBytes(value, 4, start == cleanedAndPadded.length() ? padding : 0);
 
-		std::string chunk(bytes.begin(), bytes.end()); 
-		result.append(chunk);
+		result.insert(result.end(), bytes.begin(), bytes.end());
 	}
 
 	return result;
@@ -112,6 +120,7 @@ std::string decodeASCII85(std::string codedText) {
 
 int main()
 {
+	initAlphabetLookup();
 	std::string buffer = readString();
 	std::cout << decodeASCII85(buffer) << std::endl;
 	return 0;
