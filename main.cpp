@@ -154,10 +154,6 @@ std::vector<uint8_t> convertIntToBytes(uint32_t value, size_t numberOfBytes, int
 		bytes.push_back(byte);
 	}
 
-	for (size_t i = 0; i < padding; ++i) {
-		bytes.push_back(0x00);
-	}
-
 	return bytes;
 }
 
@@ -165,7 +161,6 @@ std::string decodeASCII85(std::string& codedText) {
 	std::string result;
 	std::string cleaned = cleanASCII85(codedText);
 	std::string cleanedAndPadded = padASCII85String(cleaned);
-
 	if (cleaned.empty()) {
 		throw std::invalid_argument("Empty string after removing whitespace characters");
 	}
@@ -177,9 +172,12 @@ std::string decodeASCII85(std::string& codedText) {
 	while (start + 4 < cleanedAndPadded.length()) {
 		uint32_t value = 0;
 		for (int i = 0; i <= start + 4; i++) {
+			if (start + i == cleanedAndPadded.length()) {
+				break;
+			}
 			char character = cleanedAndPadded[start + i];
 			if (alphabetLookup.count(character) <= 0) {
-				throw std::invalid_argument("Invalid non-ASCII85 characters");
+				throw std::invalid_argument("Invalid non-ASCII85 characters " + std::to_string(cleanedAndPadded[start + i]));
 			}
 			int multiplier = alphabetLookup[character];
 			if (multiplier < 0) {
