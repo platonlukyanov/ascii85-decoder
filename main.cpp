@@ -5,6 +5,10 @@
 #include <algorithm>
 #include <cmath>
 
+#ifdef TESTING
+extern const std::string alphabet;
+extern std::unordered_map<char, int> alphabetLookup;
+#endif
 const std::string alphabet = "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstu";
 
 std::unordered_map<char, int> alphabetLookup;
@@ -47,14 +51,14 @@ std::vector<uint32_t> readBytesByFour(const std::vector<uint8_t>& data) {
 		for (size_t i = 0; i < copySize; ++i) {
 			chunk[i] = data[index + i]; // Если copySize меньше 4, то оставшиеся байты останутся нулевыми
 		}
-
+	
 		uint32_t value = 0;
 
-		if (!littleEndian) {
-			value = chunk[0] | (chunk[1] << 8) | (chunk[2] << 16) | (chunk[3] << 24);
-		} else {
-			value = (chunk[0] << 24) | (chunk[1] << 16) | (chunk[2] << 8) | chunk[3];
-		}
+               if (!littleEndian) {
+                       value = chunk[0] | (chunk[1] << 8) | (chunk[2] << 16) | (chunk[3] << 24);
+               } else {
+                       value = (chunk[0] << 24) | (chunk[1] << 16) | (chunk[2] << 8) | chunk[3];
+               }
 		values.push_back(value);
 
 		index += copySize;
@@ -196,7 +200,9 @@ std::string decodeASCII85(std::string& codedText) {
 
 	return result;
 }
-
+#ifdef TESTING
+// Disable main when building tests
+#else
 int main(int argc, char* argv[])
 {
 	std::string mode = "e";
@@ -236,3 +242,4 @@ int main(int argc, char* argv[])
 	
 	return 0;
 }
+#endif
