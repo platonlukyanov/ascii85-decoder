@@ -1,0 +1,37 @@
+
+name: Build and Test
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Install dependencies for gtest
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libgtest-dev cmake python3 python3-pip
+        # Build and install gtest libraries
+        cd /usr/src/gtest
+        sudo cmake CMakeLists.txt
+        sudo make
+        sudo cp *.a /usr/lib
+
+    - name: Build main app
+      run: |
+        g++ -o ascii85 main.cpp
+
+    - name: Build and run gtests
+      run: |
+        g++ -DTESTING -o tests test/test.cpp main.cpp -lgtest -lgtest_main -lpthread
+        ./tests
+
+    - name: Install Python dependencies
+      run: |
+        python3 -m pip install --upgrade pip
+
+    - name: Run Python tests
+      run: |
+        python3 test/test_random.py
