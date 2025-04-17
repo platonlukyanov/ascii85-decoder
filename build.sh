@@ -1,11 +1,14 @@
 #!/bin/bash
 
+# Define versions for g++ and libraries
+GXX_VERSION="11"
+
 build_app() {
-    g++ -o ascii85 main.cpp
+    g++-"${GXX_VERSION}" -std=c++17 -o ascii85 main.cpp
 }
 
 build_tests() {
-    g++ -DTESTING -o tests test/test.cpp main.cpp \
+    g++-"${GXX_VERSION}" -std=c++17 -DTESTING -o tests test/test.cpp main.cpp \
         -lgtest -lgtest_main -lpthread
 }
 
