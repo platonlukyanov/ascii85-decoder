@@ -15,35 +15,38 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     
-    - name: Enviroinment Check 
+    - name: Environment Check 
       run: env
 
-      - name: Installing make & other tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install build-essential
+    - name: Install build tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential
 
-      - name: Fetching source code
-        uses: actions/checkout@v4
-      
-      - name: Setup GoogleTest
-        uses: Bacondish2023/setup-googletest@v1
-        with:
-          tag: v1.14.0  # specify the version you want to use
+    - name: Setup GoogleTest
+      uses: Bacondish2023/setup-googletest@v1
+      with:
+        tag: v1.14.0
 
-      - name: Build main app
-        run: |
-          source ./build.sh
-      
-      - name: Build and run gtests
-        run: |
-          ./build.sh test
-          ./tests
+    - name: Build main application
+      run: |
+        chmod +x build.sh
+        ./build.sh
+
+    - name: Run C++ tests
+      run: |
+        ./build.sh test
+        ./tests  # Ensure this matches your test binary path
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.x'
 
     - name: Install Python dependencies
       run: |
-        python3 -m pip install --upgrade pip
+        python -m pip install --upgrade pip
 
     - name: Run Python tests
       run: |
-        python3 test/test_random.py
+        python3 test/test_random.py 
