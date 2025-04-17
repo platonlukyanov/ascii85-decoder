@@ -14,6 +14,12 @@ $ ascii85 -d # читает ASCII85 из STDIN и выдаёт байты в STD
 1. Иметь установленный gtest
 2. `./build.sh test && ./tests`
 
+
+## Как запустить тесты на Python?
+1. Установить python3
+2. Собрать программу `./build.sh`
+3. Запустить тесты `python3 test/test_random.py`
+
 Задачи:
 
 ## 1.1. Сам декодер
